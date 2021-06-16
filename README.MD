@@ -1,11 +1,12 @@
-# TDE Webpack MJML Plugin 
+# Webatvantage Webpack MJML Plugin 
 
-Webpack plugin for converting MJML files to HTML
+Webpack plugin for converting MJML files to HTML.  
+Forked from TDE Webpack MJML Plugin.
 
 ## Install
 
 ```bash
-npm install --save-dev tde-webpack-mjml-plugin
+npm install --save-dev webatvantage-webpack-mjml-plugin
 ```
 
 ## Usage
@@ -13,14 +14,14 @@ npm install --save-dev tde-webpack-mjml-plugin
 In your `webpack.config.js`
 
 ```javascript
-var MjmlPlugin = require('tde-webpack-mjml-plugin');
+const MjmlPlugin = require('webatvantage-webpack-mjml-plugin');
 
 module.exports = {
     // ...
     plugins: [
         new MjmlPlugin(paths.MJML, {
             extension: '.twig',
-            outputPath: 'path/to/mjml'
+            outputPath: path.resolve(__dirname, 'path/to/mjml'),
         }),
     ]
 };
@@ -35,7 +36,10 @@ module.exports = {
     plugins: [
         new MjmlPlugin(inputPath, {
             extension: options.extension,
-            outputPath: options.outputPath
+            outputPath: options.outputPath,
+            // MJML options (https://documentation.mjml.io/#inside-node-js)
+            filePath: path.resolve(__dirname, 'path/to/file'),
+            keepComments: false,
         }),
     ]
 }
@@ -61,7 +65,12 @@ Default: `""`
 
 The path where HTML files should be written to
 
+### `MJML options`
+Pass optional options to the mjml2html function  
+List of available options: https://documentation.mjml.io/#inside-node-js
+
 
 ## License
 
-MIT © [TDE](https://github.com/tdeNL)
+MIT © [TDE](https://github.com/tdeNL)  
+MIT © [Webatvantage](https://github.com/webatvantage)
