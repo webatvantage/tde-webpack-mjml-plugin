@@ -3,7 +3,6 @@
 const mjml2html = require('mjml');
 const glob = require('glob');
 const fs = require('fs-extra');
-const _ = require('lodash');
 
 /**
  * @type {{extension: string, outputPath: string}}
@@ -11,7 +10,9 @@ const _ = require('lodash');
 const defaultOptions = {
   extension: '.html',
   filePath: '.',
-  outputPath: ''
+  outputPath: '',
+  keepComments: false,
+  minify: true,
 };
 
 /**
@@ -20,9 +21,9 @@ const defaultOptions = {
  * @constructor
  */
 const WebpackMjmlStore = function (inputPath, options) {
-    this.inputPath = inputPath.replace(/\\/g,'/');
-    this.options = _.defaults(options, defaultOptions);
-    this.options.outputPath = this.options.outputPath.replace(/\\/g,'/');
+  this.inputPath = inputPath.replace(/\\/g, '/');
+  this.options = { ...defaultOptions, ...options };
+  this.options.outputPath = this.options.outputPath.replace(/\\/g, '/');
 };
 
 /**
@@ -90,9 +91,7 @@ WebpackMjmlStore.prototype.convertFile = function (file) {
 
   return new Promise(function (resolve, reject) {
     fs.readFile(file, 'utf8', function (err, contents) {
-      let response = mjml2html(contents, {
-        filePath: that.options.filePath
-      });
+      let response = mjml2html(contents, that.options);
 
       if (response.errors.length) {
         console.log('\x1b[36m', 'MJML Warnings in file "' + file + '":', '\x1b[0m');
