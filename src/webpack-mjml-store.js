@@ -10,6 +10,7 @@ const fs = require('fs-extra');
 const defaultOptions = {
   extension: '.html',
   filePath: '.',
+  watchPath: '.',
   outputPath: '',
   keepComments: false,
   minify: true,
@@ -21,9 +22,15 @@ const defaultOptions = {
  * @constructor
  */
 const WebpackMjmlStore = function (inputPath, options) {
-  this.inputPath = inputPath.replace(/\\/g, '/');
   this.options = { ...defaultOptions, ...options };
+  this.inputPath = inputPath.replace(/\\/g, '/');
   this.options.outputPath = this.options.outputPath.replace(/\\/g, '/');
+
+  if (options?.watchPath) {
+    this.watchPath = this.options.watchPath.replace(/\\/g, '/');
+  } else {
+    this.watchPath = this.inputPath;
+  }
 };
 
 /**
@@ -37,7 +44,7 @@ WebpackMjmlStore.prototype.apply = function (compiler) {
     function (compilation, callback) {
       fs.ensureDirSync(that.options.outputPath);
 
-      glob(that.inputPath + '/**/*.mjml', function (err, files) {
+      glob(that.watchPath + '/**/*.mjml', function (err, files) {
         if (!files.length) {
           return callback();
         }
@@ -53,11 +60,13 @@ WebpackMjmlStore.prototype.apply = function (compiler) {
             compilation.fileDependencies.push(file);
           }
 
-          let outputFile = file
-            .replace(that.inputPath, that.options.outputPath)
-            .replace('.mjml', that.options.extension);
+          if (files[fileKey].includes(that.inputPath)) {
+            let outputFile = file
+              .replace(that.inputPath, that.options.outputPath)
+              .replace('.mjml', that.options.extension);
 
-          tasks.push(that.handleFile(file, outputFile));
+            tasks.push(that.handleFile(file, outputFile));
+          }
         }
 
         Promise.all(tasks)
