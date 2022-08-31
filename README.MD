@@ -1,6 +1,6 @@
-# Webatvantage Webpack MJML Plugin 
+# Webatvantage Webpack MJML Plugin
 
-Webpack plugin for converting MJML files to HTML.  
+Webpack plugin for converting MJML files to HTML.
 Forked from TDE Webpack MJML Plugin.
 
 ## Install
@@ -65,12 +65,48 @@ Default: `""`
 
 The path where HTML files should be written to
 
+### `options.watchPath`
+
+Type: `String`<br>
+Default: `""`
+
+The path to the root of the mjml directory. This option allows re-compilation when a partial (mj-include) changes.
+With the directory structure below:
+
+```
+project
+
+└─── src
+  │
+  └─── mjml
+    │
+    └─── partials
+    │     │  head.mjml
+    │     │  ...
+    │
+    └─── views
+           │   newsletter.mjml
+           │   ...
+```
+
+We could use the following configuration to recompile views whenever partials change.
+
+```js
+module.exports = {
+    plugins: [
+        new MjmlPlugin(path.resolve(__dirname, 'src/mjml/views'), {
+          watchPath: path.resolve(__dirname, 'src/mjml'),
+        }),
+    ]
+}
+```
+
 ### `MJML options`
-Pass optional options to the mjml2html function  
+Pass optional options to the mjml2html function
 List of available options: https://documentation.mjml.io/#inside-node-js
 
 
 ## License
 
-MIT © [TDE](https://github.com/tdeNL)  
+MIT © [TDE](https://github.com/tdeNL)
 MIT © [Webatvantage](https://github.com/webatvantage)
